@@ -22,10 +22,9 @@ const App = () => {
     };
     void fetchPatientList();
   }, []);
-  console.log("patients", patients);
 
   return (
-    <div className="App">
+    <div>
       <Router>
         <Container>
           <Typography variant="h3" style={{ marginBottom: "0.5em" }}>

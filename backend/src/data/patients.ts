@@ -91,6 +91,16 @@ const patients: IPatient[] = [
                     'Yearly control visit. Due to high cholesterol levels recommended to eat more vegetables.',
                 healthCheckRating: 1,
             },
+
+            {
+                id: '37be178z-a432-5wa4-aac2-e32810e12a15',
+                date: '2021-10-05',
+                specialist: 'MD House',
+                type: 'HealthCheck',
+                description:
+                    'The patient complains of shortness of breath and skipping heartbeats that might suggest a life-threatening cardiac issue. Advanced diagnosis and intervention will be required for such patients, therefore, referral to a cardiologist is immediate.',
+                healthCheckRating: 3,
+            },
         ],
     },
     {

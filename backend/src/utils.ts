@@ -1,5 +1,14 @@
-import { NewPatientEntry } from "./types/patients";
-import { Gender } from "./types/patients";
+import {
+    EntryWithoutId,
+    NewPatientEntry,
+    HealthCheckRating,
+    HealthCheckEntryWithoutId,
+    HospitalEntryWithoutId,
+    OccupationalHealthcareEntryWithoutId,
+    Gender,
+} from "./types/patients";
+
+import { IDiagnosis } from "./types/diagnoses";
 
 const toNewPatientEntry = (object: unknown): NewPatientEntry => {
     if (!object || typeof object !== 'object') {
@@ -19,6 +28,7 @@ const toNewPatientEntry = (object: unknown): NewPatientEntry => {
 
     throw new Error('Incorrect data: some fields are missing');
 };
+
 
 const parseSsn = (ssn: unknown): string => {
     if (!ssn || !isString(ssn)) {
@@ -58,6 +68,81 @@ const parseString = (name: unknown): string => {
     return name;
 };
 
+const parseDiagnosisCodes = (codes: unknown): Array<IDiagnosis['code']> | undefined => {
+    if (!codes) {
+        return undefined;
+    }
+    if (!Array.isArray(codes)) {
+        throw new Error('Incorrect diagnosisCodes: not an array');
+    }
+    return codes.map(code => {
+        if (!isString(code)) {
+            throw new Error('Incorrect diagnosisCode: not a string');
+        }
+        return code;
+    });
+};
+const parseHealthCheckRating = (rating: unknown): HealthCheckRating => {
+    if (rating === undefined || rating === null || typeof rating !== 'number') {
+        throw new Error('Incorrect or missing HealthCheckRating');
+    }
+
+    return rating as HealthCheckRating;
+};
+
+const toPatientEntries = (object: unknown): EntryWithoutId => {
+    if (!object || typeof object !== 'object' || object === null) {
+        throw new Error('Incorrect or missing data');
+    }
+
+    const entryObject = object as { [key: string]: unknown };
+
+    const baseEntry = {
+        description: parseString(entryObject['description']),
+        date: parseDate(entryObject['date']),
+        specialist: parseString(entryObject['specialist']),
+        diagnosisCodes: parseDiagnosisCodes(entryObject['diagnosisCodes'])
+    };
 
 
-export { toNewPatientEntry };
+    switch (entryObject['type']) {
+        case "HealthCheck":
+            return {
+                ...baseEntry,
+                type: "HealthCheck",
+                healthCheckRating: parseHealthCheckRating(entryObject['healthCheckRating']),
+            } as HealthCheckEntryWithoutId;
+        case "OccupationalHealthcare":
+            const occupationalEntry: OccupationalHealthcareEntryWithoutId = {
+                ...baseEntry,
+                type: "OccupationalHealthcare",
+                employerName: parseString(entryObject['employerName']),
+            };
+
+            if (entryObject['sickLeave'] && typeof entryObject['sickLeave'] === 'object' && entryObject['sickLeave'] !== null) {
+                const sickLeave = entryObject['sickLeave'] as { startDate: unknown, endDate: unknown };
+                occupationalEntry.sickLeave = {
+                    startDate: parseDate(sickLeave.startDate),
+                    endDate: parseDate(sickLeave.endDate)
+                };
+            }
+            return occupationalEntry;
+        case "Hospital":
+            if (!entryObject['discharge'] || typeof entryObject['discharge'] !== 'object' || entryObject['discharge'] === null) {
+                throw new Error('Incorrect or missing discharge');
+            }
+            const discharge = entryObject['discharge'] as { date: unknown, criteria: unknown };
+            return {
+                ...baseEntry,
+                type: "Hospital",
+                discharge: {
+                    date: parseDate(discharge.date),
+                    criteria: parseString(discharge.criteria)
+                }
+            } as HospitalEntryWithoutId;
+        default:
+            throw new Error('Incorrect entry type');
+    }
+};
+
+export { toNewPatientEntry, toPatientEntries };
