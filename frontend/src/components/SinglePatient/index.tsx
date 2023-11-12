@@ -8,7 +8,7 @@ import { BsHospital } from "react-icons/bs";
 import { MdWorkOutline } from "react-icons/md";
 import { parseISO, differenceInCalendarDays, format } from "date-fns";
 import NewEntryForm from "./NewEntryForm";
-
+import { RiHealthBookLine } from "react-icons/ri";
 const assertNever = (value: never): never => {
   throw new Error(
     `Unhandled discriminated union member: ${JSON.stringify(value)}`
@@ -27,10 +27,11 @@ const HospitalEntry: FC<EntryProps> = ({ entry, children }) => {
 
   return (
     <div>
-      <div className="text-xl flex items-center gap-x-2">
+      <div className="text-xl font-bold flex items-center gap-x-2">
         <BsHospital />
-        {entry.date}
+        Hospital Visit
       </div>
+      <div className="text-xl flex items-center gap-x-2">{entry.date}</div>
       {children}
       <div className="border-b my-4" />
       {entry.discharge && (
@@ -111,7 +112,10 @@ const HealthCheckEntry: FC<EntryProps> = ({ entry, children }) => {
 
   return (
     <div>
-      <div className="text-xl font-bold">Health Check</div>
+      <div className="text-xl font-bold flex items-center gap-x-2">
+        <RiHealthBookLine />
+        Health Check
+      </div>
       <div className="text-xl">{entry.date}</div>
       {children}
       <div className="border-b my-4" />
@@ -131,10 +135,12 @@ const OccupationalHealthcareEntry: FC<EntryProps> = ({ entry, children }) => {
 
   return (
     <div>
-      <div className="text-xl flex items-center gap-x-2">
+      <div className="text-xl font-bold flex items-center gap-x-2">
         <MdWorkOutline />
-        {entry.date}
+        Occupational Healthcare
       </div>
+
+      <div className="text-xl flex items-center gap-x-2">{entry.date}</div>
       <div>
         <span>Employer: </span>
         <span className="italic font-semibold">{entry.employerName}</span>

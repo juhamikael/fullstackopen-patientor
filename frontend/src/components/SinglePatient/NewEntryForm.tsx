@@ -202,14 +202,14 @@ const NewEntryForm = ({
                     control={healthCheckForm.control}
                     render={({ field }) => (
                       <FormItem className={cn("flex flex-col")}>
-                        <FormLabel>Username</FormLabel>
+                        <FormLabel>Date</FormLabel>
                         <Popover>
                           <PopoverTrigger asChild>
                             <FormControl>
                               <Button
                                 variant={"outline"}
                                 className={cn(
-                                  "w-[240px] pl-3 text-left font-normal",
+                                  " pl-3 text-left font-normal",
                                   !field.value && "text-muted-foreground"
                                 )}
                               >
@@ -521,7 +521,7 @@ const NewEntryForm = ({
                               <Button
                                 variant={"outline"}
                                 className={cn(
-                                  "w-[240px] pl-3 text-left font-normal",
+                                  " pl-3 text-left font-normal",
                                   !field.value && "text-muted-foreground"
                                 )}
                               >
